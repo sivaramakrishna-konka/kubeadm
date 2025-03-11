@@ -2,6 +2,11 @@ name: Terraform Kubeadm Deployment
 
 on:
   workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   terraform:
     name: Terraform Apply
@@ -10,6 +15,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::522814728660:role/sivaramakrishna-konka-iam-github-actions
+          role-session-name: GitHubActionsTerraform
+          aws-region: us-east-1
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
