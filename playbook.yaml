@@ -179,7 +179,7 @@
     - name: Apply the KUBECONFIG
       shell: bash -c "source /home/ubuntu/.bashrc"
 
-
+  
     - name: Download Calico manifest
       get_url:
         url: "https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml"
@@ -213,7 +213,13 @@
       args:
         creates: /usr/local/bin/k9s
 
-
+    - name: Add alias k='kubectl' to .bashrc
+      lineinfile:
+        path: /home/{{ ansible_user }}/.bashrc
+        line: "alias k='kubectl'"
+        create: yes
+        state: present
+        
 - name: Join Worker Nodes
   hosts: workers
   become: yes
