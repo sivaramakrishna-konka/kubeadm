@@ -219,7 +219,7 @@
         line: "alias k='kubectl'"
         create: yes
         state: present
-        
+
 - name: Join Worker Nodes
   hosts: workers
   become: yes
@@ -238,6 +238,4 @@
     - name: Join Kubernetes cluster
       ansible.builtin.command: "{{ join_command }}"
       args:
-        creates: /etc/kubernetes/kubelet.conf     
-# sudo ctr -n k8s.io containers ls
-# sudo ctr -n k8s.io containers list
+        creates: /etc/kubernetes/kubelet.conf
