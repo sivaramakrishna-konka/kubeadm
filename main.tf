@@ -101,6 +101,7 @@ resource "aws_route53_record" "www" {
   type     = "A"
   ttl      = "300"
   records  = [aws_instance.k8s_nodes[each.key].public_ip]
+  allow_overwrite = true
 }
 
 resource "null_resource" "run_ansible" {
