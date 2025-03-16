@@ -40,17 +40,8 @@
         state: present
         update_cache: yes
 
-    # - name: Add Docker GPG key
-    #   shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
-
-    - name: Check if Docker GPG key exists
-      stat:
-        path: /etc/apt/trusted.gpg.d/docker.gpg
-      register: docker_gpg
-
-    - name: Add Docker GPG key if not present
-      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
-      when: not docker_gpg.stat.exists
+    - name: Add Docker GPG key
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
 
     - name: Add Docker repository
       apt_repository:
