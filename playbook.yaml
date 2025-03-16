@@ -40,6 +40,11 @@
         state: present
         update_cache: yes
 
+    - name: Remove existing Docker GPG key if present
+      file:
+        path: /etc/apt/trusted.gpg.d/docker.gpg
+        state: absent
+
     - name: Add Docker GPG key
       shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
 
