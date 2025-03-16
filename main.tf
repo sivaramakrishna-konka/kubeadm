@@ -39,7 +39,7 @@ resource "aws_instance" "k8s_nodes" {
   for_each                    = var.instance_types
   ami                         = data.aws_ami.example.id
   instance_type               = each.value
-  key_name                    = "bapatlas.site"
+  key_name                    = "siva"
   security_groups             = [aws_security_group.k8s_sg.name]
   associate_public_ip_address = true
 
@@ -129,10 +129,10 @@ resource "null_resource" "run_ansible" {
     }
 
     inline = [
-      "cat <<EOF > /home/ubuntu/bapatlas.site.pem",
-      "${file("${path.module}/bapatlas.site.pem")}",
+      "cat <<EOF > /home/ubuntu/siva.pem",
+      "${file("${path.module}/siva.pem")}",
       "EOF",
-      "sudo chmod 400 /home/ubuntu/bapatlas.site.pem",
+      "sudo chmod 400 /home/ubuntu/siva.pem",
       "sudo apt update && sudo apt install -y ansible",
       "echo '[master1]' > /home/ubuntu/inventory.ini",
       "echo 'master ansible_host=127.0.0.1 ansible_connection=local' >> /home/ubuntu/inventory.ini",
@@ -141,9 +141,9 @@ resource "null_resource" "run_ansible" {
       "echo 'worker2 ansible_host=${aws_instance.k8s_nodes["worker2"].private_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/bapatlas.site.pem ansible_ssh_common_args=\"-o StrictHostKeyChecking=no\"' >> /home/ubuntu/inventory.ini",
       "cat /home/ubuntu/inventory.ini",
       "ls -l /home/ubuntu/",
-      "cat /home/ubuntu/bapatlas.site.pem",
-      "md5sum /home/ubuntu/bapatlas.site.pem",
-      "ssh-keygen -y -f /home/ubuntu/bapatlas.site.pem",
+      "cat /home/ubuntu/siva.pem",
+      "md5sum /home/ubuntu/siva.pem",
+      "ssh-keygen -y -f /home/ubuntu/siva.pem",
       "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /home/ubuntu/inventory.ini /home/ubuntu/playbook.yaml"
     ]
   }
