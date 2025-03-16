@@ -39,7 +39,7 @@ resource "aws_instance" "k8s_nodes" {
   for_each                    = var.instance_types
   ami                         = data.aws_ami.example.id
   instance_type               = each.value
-  key_name                    = "siva.pem"
+  key_name                    = "siva"
   security_groups             = [aws_security_group.k8s_sg.name]
   associate_public_ip_address = true
 
