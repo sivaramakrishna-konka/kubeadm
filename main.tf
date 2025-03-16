@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "spa-ecs-example-siva.pem"
+    bucket = "spa-ecs-example-siva"
     key    = "kubeadm/terraform.tfstate"
     region = "us-east-1"
   }
