@@ -215,7 +215,7 @@
 
     - name: Add alias k='kubectl' to .bashrc
       lineinfile:
-        path: /home/{{ ansible_user }}/.bashrc
+        path: /home/ubuntu/.bashrc
         line: "alias k='kubectl'"
         create: yes
         state: present
