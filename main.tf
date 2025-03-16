@@ -114,7 +114,7 @@ resource "null_resource" "run_ansible" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("${path.module}/bapatlas.site.pem")
+      private_key = file("${path.module}/siva.pem")
       host        = aws_instance.k8s_nodes["master"].public_ip
     }
   }
@@ -124,7 +124,7 @@ resource "null_resource" "run_ansible" {
     connection {
       type        = "ssh"
       user        = "ubuntu"
-      private_key = file("${path.module}/bapatlas.site.pem")
+      private_key = file("${path.module}/siva.pem")
       host        = aws_instance.k8s_nodes["master"].public_ip
     }
 
