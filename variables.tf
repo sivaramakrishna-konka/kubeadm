@@ -7,7 +7,7 @@ variable "instance_types" {
   }
 }
 
-variable "kay_name"{
+variable "key_name"{
     default = "siva"
 }
 
