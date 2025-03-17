@@ -47,6 +47,7 @@ resource "aws_route53_record" "www" {
 }
 
 resource "null_resource" "run_ansible" {
+  for_each = var.play_book_names
   depends_on = [aws_instance.k8s_nodes]
 
   triggers = {
@@ -55,7 +56,6 @@ resource "null_resource" "run_ansible" {
 
   # Copy playbook.yaml
   provisioner "file" {
-    for_each = var.play_book_names
     source      = "ansible-playbooks/${each.value}"
     destination = "/home/ubuntu/${each.value}"
 
