@@ -8,19 +8,13 @@
         path: /etc/kubernetes/kubelet.conf
       register: kubelet_check
 
-    - name: Fetch join command from control node
-      ansible.builtin.slurp:
-        src: "/tmp/join_command.txt"
-      delegate_to: localhost
-      run_once: true
-      register: join_command_file
-      when: not kubelet_check.stat.exists
-
-    - name: Convert join command to string
-      set_fact:
-        join_command: "{{ join_command_file['content'] | b64decode | trim }}"
+    - name: Fetch join command from master
+      delegate_to: master1
+      command: cat /tmp/join_command.txt
+      register: join_command
+      changed_when: false
       when: not kubelet_check.stat.exists
 
     - name: Join Kubernetes cluster
-      command: "{{ join_command }}"
+      command: "{{ join_command.stdout }}"
       when: not kubelet_check.stat.exists

@@ -18,12 +18,11 @@
       changed_when: false
       when: not kubeinit_check.stat.exists
 
-    - name: Save join command to temporary file
-      delegate_to: localhost
-      run_once: true
+    - name: Save join command on master node
       copy:
         content: "{{ join_command.stdout }}"
         dest: "/tmp/join_command.txt"
+        mode: '0644'
       when: not kubeinit_check.stat.exists
 
     - name: Ensure .kube directory exists
