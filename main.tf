@@ -56,7 +56,7 @@ resource "null_resource" "run_ansible" {
   # Copy playbook.yaml
   provisioner "file" {
     for_each = var.play_book_names
-    source      = "anisble-playbooks/${each.value}"
+    source      = "ansible-playbooks/${each.value}"
     destination = "/home/ubuntu/${each.value}"
 
     connection {
