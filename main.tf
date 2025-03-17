@@ -124,7 +124,7 @@ resource "null_resource" "run_ansible" {
       "sudo chmod 400 /home/ubuntu/siva",
       "chmod +x /home/ubuntu/setup_ansible.sh",
       "bash /home/ubuntu/setup_ansible.sh",
-      "echo 'Hello World'"
+      "echo 'Hello World'",
       "echo 'Hello World!"
     ]
   }
