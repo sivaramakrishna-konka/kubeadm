@@ -143,7 +143,8 @@ resource "null_resource" "run_ansible" {
 
     inline = [
       "chmod +x /home/ubuntu/setup_ansible.sh",
-      "bash /home/ubuntu/setup_ansible.sh"
+      "bash /home/ubuntu/setup_ansible.sh",
+      "echo 'Hello World'"
     ]
   }
 }
