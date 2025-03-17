@@ -50,6 +50,19 @@
         update_cache: yes
       when: not kubeadm_check.stat.exists
 
+    - name: Remove existing Docker GPG key if present
+      file:
+        path: /etc/apt/trusted.gpg.d/docker.gpg
+        state: absent
+
+    - name: Add Docker GPG key
+      shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmour -o /etc/apt/trusted.gpg.d/docker.gpg
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
     - name: Install containerd
       apt:
         name: containerd.io
