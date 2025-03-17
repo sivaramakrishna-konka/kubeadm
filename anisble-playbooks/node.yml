@@ -1,0 +1,26 @@
+---
+- name: Join Worker Nodes
+  hosts: workers
+  become: yes
+  tasks:
+    - name: Check if node is already joined
+      stat:
+        path: /etc/kubernetes/kubelet.conf
+      register: kubelet_check
+
+    - name: Fetch join command from control node
+      ansible.builtin.slurp:
+        src: "/tmp/join_command.txt"
+      delegate_to: localhost
+      run_once: true
+      register: join_command_file
+      when: not kubelet_check.stat.exists
+
+    - name: Convert join command to string
+      set_fact:
+        join_command: "{{ join_command_file['content'] | b64decode | trim }}"
+      when: not kubelet_check.stat.exists
+
+    - name: Join Kubernetes cluster
+      command: "{{ join_command }}"
+      when: not kubelet_check.stat.exists

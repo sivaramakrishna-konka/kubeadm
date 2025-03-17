@@ -1,0 +1,68 @@
+---
+- name: Initialize Kubernetes Master
+  hosts: master1
+  become: yes
+  tasks:
+    - name: Check if Kubernetes is already initialized
+      stat:
+        path: /etc/kubernetes/admin.conf
+      register: kubeinit_check
+
+    - name: Initialize Kubernetes control plane
+      command: kubeadm init --pod-network-cidr=192.168.0.0/16
+      when: not kubeinit_check.stat.exists
+
+    - name: Get join command
+      command: kubeadm token create --print-join-command
+      register: join_command
+      changed_when: false
+      when: not kubeinit_check.stat.exists
+
+    - name: Save join command to temporary file
+      delegate_to: localhost
+      run_once: true
+      copy:
+        content: "{{ join_command.stdout }}"
+        dest: "/tmp/join_command.txt"
+      when: not kubeinit_check.stat.exists
+
+    - name: Ensure .kube directory exists
+      file:
+        path: /home/ubuntu/.kube
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+        mode: '0755'
+      when: not kubeinit_check.stat.exists
+
+    - name: Copy kubeconfig file
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+        group: ubuntu
+        mode: '0644'
+      when: not kubeinit_check.stat.exists
+
+    - name: Set KUBECONFIG environment variable
+      lineinfile:
+        path: /home/ubuntu/.bashrc
+        line: 'export KUBECONFIG=/home/ubuntu/.kube/config'
+      when: not kubeinit_check.stat.exists
+
+    - name: Apply the KUBECONFIG
+      shell: bash -c "source /home/ubuntu/.bashrc"
+      when: not kubeinit_check.stat.exists
+
+    - name: Download Calico manifest
+      get_url:
+        url: "https://raw.githubusercontent.com/projectcalico/calico/v3.29.2/manifests/calico.yaml"
+        dest: "/home/ubuntu/calico.yaml"
+        mode: '0644'
+      when: not kubeinit_check.stat.exists
+
+    - name: Apply Calico network plugin
+      command: kubectl apply -f /home/ubuntu/calico.yaml
+      become_user: ubuntu
+      when: not kubeinit_check.stat.exists

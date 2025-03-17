@@ -1,0 +1,112 @@
+---
+- name: Prepare All Nodes
+  hosts: all
+  become: yes
+  tasks:
+    - name: Check if Kubernetes is already installed
+      stat:
+        path: /usr/bin/kubeadm
+      register: kubeadm_check
+
+    - name: Load required kernel modules
+      copy:
+        dest: /etc/modules-load.d/containerd.conf
+        content: |
+          overlay
+          br_netfilter
+      when: not kubeadm_check.stat.exists
+
+    - name: Load kernel modules
+      modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - overlay
+        - br_netfilter
+      when: not kubeadm_check.stat.exists
+
+    - name: Configure sysctl parameters for Kubernetes
+      copy:
+        dest: /etc/sysctl.d/kubernetes.conf
+        content: |
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.bridge.bridge-nf-call-iptables = 1
+          net.ipv4.ip_forward = 1
+      when: not kubeadm_check.stat.exists
+
+    - name: Apply sysctl settings
+      command: sysctl --system
+      when: not kubeadm_check.stat.exists
+
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+          - gnupg2
+          - software-properties-common
+          - apt-transport-https
+          - ca-certificates
+        state: present
+        update_cache: yes
+      when: not kubeadm_check.stat.exists
+
+    - name: Install containerd
+      apt:
+        name: containerd.io
+        state: present
+        update_cache: yes
+      when: not kubeadm_check.stat.exists
+
+    - name: Configure containerd
+      command: containerd config default > /etc/containerd/config.toml
+      args:
+        creates: /etc/containerd/config.toml
+      when: not kubeadm_check.stat.exists
+
+    - name: Enable SystemdCgroup in containerd
+      replace:
+        path: /etc/containerd/config.toml
+        regexp: 'SystemdCgroup = false'
+        replace: 'SystemdCgroup = true'
+      when: not kubeadm_check.stat.exists
+
+    - name: Restart and enable containerd
+      systemd:
+        name: containerd
+        state: restarted
+        enabled: yes
+      when: not kubeadm_check.stat.exists
+
+    - name: Add Kubernetes repository
+      block:
+        - name: Add Kubernetes repository key
+          apt_key:
+            url: https://pkgs.k8s.io/core:/stable:/v1.32/deb/Release.key
+            state: present
+
+        - name: Add Kubernetes repository
+          apt_repository:
+            repo: "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.32/deb/ /"
+            state: present
+            filename: kubernetes
+
+        - name: Update APT cache
+          apt:
+            update_cache: yes
+      when: not kubeadm_check.stat.exists
+
+    - name: Install kubeadm, kubelet, and kubectl
+      apt:
+        name:
+          - kubelet
+          - kubeadm
+          - kubectl
+        state: present
+      when: not kubeadm_check.stat.exists
+
+    - name: Enable and start kubelet
+      systemd:
+        name: kubelet
+        state: started
+        enabled: yes
+      when: not kubeadm_check.stat.exists
