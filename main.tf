@@ -48,13 +48,14 @@ resource "aws_route53_record" "www" {
 
 resource "null_resource" "run_ansible" {
   for_each = var.play_book_names
+
   depends_on = [aws_instance.k8s_nodes]
 
   triggers = {
     always_run = timestamp()
   }
 
-  # Copy playbook.yaml
+  # Copy playbooks.yaml
   provisioner "file" {
     source      = "ansible-playbooks/${each.value}"
     destination = "/home/ubuntu/${each.value}"
@@ -67,6 +68,20 @@ resource "null_resource" "run_ansible" {
     }
   }
 
+  # Copy private key to remote instance
+  provisioner "file" {
+    source      = "${path.module}/siva"
+    destination = "/home/ubuntu/siva"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("${path.module}/siva")
+      host        = aws_instance.k8s_nodes["master"].public_ip
+    }
+  }
+
+  # Copy shell script
   provisioner "file" {
     source      = "setup_ansible.sh"
     destination = "/home/ubuntu/setup_ansible.sh"

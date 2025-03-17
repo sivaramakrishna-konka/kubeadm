@@ -15,6 +15,6 @@ variable "play_book_names"{
     default = {
         "all_node" = "all-nodes-setup.yml"
         "master"   = "master.yml"
-        "node"     = "node.yaml"
+        "node"     = "node.yml"
     }
 }
