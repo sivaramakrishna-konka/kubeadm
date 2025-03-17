@@ -71,7 +71,7 @@ resource "null_resource" "run_ansible" {
   # Copy private key to remote instance
   provisioner "file" {
     source      = "${path.module}/siva"
-    destination = "/home/ubuntu/siva"
+    destination = "/tmp/siva"
 
     connection {
       type        = "ssh"
@@ -104,6 +104,8 @@ resource "null_resource" "run_ansible" {
     }
 
     inline = [
+      "sudo mv /tmp/siva /home/ubuntu/siva",
+      "sudo chmod 400 /home/ubuntu/siva",
       "chmod +x /home/ubuntu/setup_ansible.sh",
       "bash /home/ubuntu/setup_ansible.sh",
       "echo 'Hello World'"
