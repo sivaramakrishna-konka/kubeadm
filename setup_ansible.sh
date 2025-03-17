@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # Create the SSH private key file
-cat <<EOF > /home/ubuntu/siva
-${file("${path.module}/siva")}
-EOF
+cp ${path.module}/siva /home/ubuntu/siva
+
 
 # Set correct permissions
 sudo chmod 400 /home/ubuntu/siva
