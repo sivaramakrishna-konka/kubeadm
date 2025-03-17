@@ -125,6 +125,7 @@ resource "null_resource" "run_ansible" {
       "chmod +x /home/ubuntu/setup_ansible.sh",
       "bash /home/ubuntu/setup_ansible.sh",
       "echo 'Hello World'"
+      "echo 'Hello World!"
     ]
   }
 }
