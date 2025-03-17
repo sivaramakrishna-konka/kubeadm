@@ -1,22 +1,14 @@
 #!/bin/bash
 
-# Create the SSH private key file
-cp ./siva /home/ubuntu/siva
+sudo apt update && sudo apt install -y ansible
 
 
-# Set correct permissions
-sudo chmod 400 /home/ubuntu/siva
-
-# # Install Ansible
-# sudo apt update && sudo apt install -y ansible
-
-# Display inventory file
 cat /home/ubuntu/inventory.ini
 
-# List contents of /home/ubuntu
+
 ls -l /home/ubuntu/
 
-# Display the private key content (for verification)
+
 cat /home/ubuntu/siva
 
 # # Run the Ansible playbook

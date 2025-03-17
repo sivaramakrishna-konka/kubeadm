@@ -81,6 +81,19 @@ resource "null_resource" "run_ansible" {
   #   }
   # }
 
+  # Copy private key to remote instance
+  provisioner "file" {
+    source      = "${path.module}/siva"
+    destination = "/home/ubuntu/siva"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("${path.module}/siva")
+      host        = aws_instance.k8s_nodes["master"].public_ip
+    }
+  }
+
   # Copy shell script
   provisioner "file" {
     source      = "setup_ansible.sh"
