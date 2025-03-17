@@ -120,6 +120,18 @@ resource "null_resource" "run_ansible" {
     }
   }
 
+  provisioner "file" {
+    source      = "setup_ansible.sh"
+    destination = "/home/ubuntu/setup_ansible.sh"
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("${path.module}/siva")
+      host        = aws_instance.k8s_nodes["master"].public_ip
+    }
+  }
+
   # Execute Ansible
   provisioner "remote-exec" {
     connection {
@@ -130,7 +142,8 @@ resource "null_resource" "run_ansible" {
     }
 
     inline = [
-      "bash -c '$(cat <<EOF\n$(cat setup_ansible.sh)\nEOF\n)'"
+      chmod +x /home/ubuntu/setup_ansible.sh
+      source /home/ubuntu/etup_ansible.sh
     ]
   }
 }
