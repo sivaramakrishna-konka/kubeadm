@@ -38,7 +38,7 @@
       command: sysctl --system
       when: not kubeadm_check.stat.exists
 
-    - name: Install required packages
+    - name: Install prerequisites
       apt:
         name:
           - curl
@@ -48,7 +48,6 @@
           - ca-certificates
         state: present
         update_cache: yes
-      when: not kubeadm_check.stat.exists
 
     - name: Remove existing Docker GPG key if present
       file:
