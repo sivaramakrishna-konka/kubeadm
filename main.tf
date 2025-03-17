@@ -107,6 +107,10 @@ resource "aws_route53_record" "www" {
 resource "null_resource" "run_ansible" {
   depends_on = [aws_instance.k8s_nodes]
 
+  triggers = {
+    always_run = timestamp()
+  }
+
   # Copy playbook.yaml
   provisioner "file" {
     source      = "playbook.yaml"
