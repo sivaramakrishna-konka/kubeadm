@@ -142,7 +142,7 @@ resource "null_resource" "run_ansible" {
     }
 
     inline = [
-      chmod +x /home/ubuntu/setup_ansible.sh
+      chmod +x /home/ubuntu/setup_ansible.sh,
       source /home/ubuntu/etup_ansible.sh
     ]
   }
