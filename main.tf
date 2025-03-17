@@ -94,9 +94,9 @@ resource "null_resource" "run_ansible" {
     }
   }
   # Creating Inventory file
-  provisioner "file" {
+provisioner "file" {
     content = <<EOT
-    [master1]
+    [master]
     master ansible_host=127.0.0.1 ansible_connection=local
 
     [workers]
@@ -110,7 +110,7 @@ resource "null_resource" "run_ansible" {
       private_key = file("${path.module}/siva")
       host        = aws_instance.k8s_nodes["master"].public_ip
     }
-  }
+}
   # Execute Ansible
   provisioner "remote-exec" {
     connection {
