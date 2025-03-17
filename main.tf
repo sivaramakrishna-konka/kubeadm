@@ -121,11 +121,14 @@ resource "null_resource" "run_ansible" {
     }
 
     inline = [
-      "base64 -d /home/ubuntu/siva.b64 > /home/ubuntu/siva",
-      "chmod 400 /home/ubuntu/siva",
-      "rm -f /home/ubuntu/siva.b64",
       "chmod +x /home/ubuntu/setup_ansible.sh",
       "bash /home/ubuntu/setup_ansible.sh"
     ]
   }
 }
+
+
+
+# "base64 -d /home/ubuntu/siva.b64 > /home/ubuntu/siva",
+# "chmod 400 /home/ubuntu/siva",
+# "rm -f /home/ubuntu/siva.b64",

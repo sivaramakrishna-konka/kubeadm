@@ -38,8 +38,6 @@
           - apt-transport-https
           - ca-certificates
         state: present
-        update_cache: yes
-
     - name: Remove existing Docker GPG key if present
       file:
         path: /etc/apt/trusted.gpg.d/docker.gpg
