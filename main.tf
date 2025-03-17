@@ -95,22 +95,24 @@ resource "null_resource" "run_ansible" {
   }
   # Creating Inventory file
 provisioner "file" {
-    content = <<EOT
-    [master]
-    ansible_host=127.0.0.1 ansible_connection=local
+  content = <<EOT
+[master]
+master ansible_host=${aws_instance.k8s_nodes["master"].private_ip} ansible_connection=local
 
-    [workers]
-    ansible_host=${aws_instance.k8s_nodes["worker1"].private_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/siva ansible_ssh_common_args="-o StrictHostKeyChecking=no"
-    ansible_host=${aws_instance.k8s_nodes["worker2"].private_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/siva ansible_ssh_common_args="-o StrictHostKeyChecking=no"
-    EOT
-    destination = "/home/ubuntu/inventory.ini"
-    connection {
-      type        = "ssh"
-      user        = "ubuntu"
-      private_key = file("${path.module}/siva")
-      host        = aws_instance.k8s_nodes["master"].public_ip
-    }
+[workers]
+worker1 ansible_host=${aws_instance.k8s_nodes["worker1"].private_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/siva ansible_ssh_common_args="-o StrictHostKeyChecking=no"
+worker2 ansible_host=${aws_instance.k8s_nodes["worker2"].private_ip} ansible_user=ubuntu ansible_ssh_private_key_file=/home/ubuntu/siva ansible_ssh_common_args="-o StrictHostKeyChecking=no"
+EOT
+  destination = "/home/ubuntu/inventory.ini"
 }
+
+connection {
+  type        = "ssh"
+  user        = "ubuntu"
+  private_key = file("${path.module}/siva")
+  host        = aws_instance.k8s_nodes["master"].public_ip
+}
+
   # Execute Ansible
   provisioner "remote-exec" {
     connection {

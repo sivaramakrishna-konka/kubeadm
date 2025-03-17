@@ -19,9 +19,6 @@ ls -l /home/ubuntu/
 # Display the private key content (for verification)
 cat /home/ubuntu/siva
 
-# # Generate SSH public key from the private key
-# ssh-keygen -y -f /home/ubuntu/siva
-
 # Run the Ansible playbook
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /home/ubuntu/inventory.ini /home/ubuntu/all-nodes-setup.yml
 ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook -i /home/ubuntu/inventory.ini /home/ubuntu/master.yml
