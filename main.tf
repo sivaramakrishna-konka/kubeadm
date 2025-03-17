@@ -93,6 +93,7 @@ resource "null_resource" "run_ansible" {
       host        = aws_instance.k8s_nodes["master"].public_ip
     }
   }
+  # Creating Inventory file
   provisioner "file" {
     content = <<EOT
     [master1]
